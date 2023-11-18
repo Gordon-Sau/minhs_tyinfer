@@ -1,0 +1,2 @@
+main :: Bool = let x = True;
+       in x

@@ -1,0 +1,2 @@
+main :: Int = let f = (recfun f x = (+) x x);
+              in f 1

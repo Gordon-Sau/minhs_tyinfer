@@ -1,0 +1,1 @@
+main :: forall 'a. Int * ((Bool + 'a) * Bool) = (1, (Inl True, False))

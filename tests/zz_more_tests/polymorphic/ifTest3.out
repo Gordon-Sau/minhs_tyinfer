@@ -1,0 +1,3 @@
+main :: forall 'a. Int + 'a = if True
+          then Inl 1
+          else Inl 5

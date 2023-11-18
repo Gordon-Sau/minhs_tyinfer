@@ -1,0 +1,1 @@
+main :: forall 'a 'b 'c. 'a + (('b + Int) * ('c + ())) = Inr (Inr 1, Inr ())

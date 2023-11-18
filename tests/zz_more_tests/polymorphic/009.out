@@ -1,0 +1,1 @@
+main :: forall 'a 'b. ('a * ('b + 'a)) -> 'a = (recfun f x = case snd x of {Inl y -> fst x; Inr z -> z;})

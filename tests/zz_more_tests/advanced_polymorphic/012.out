@@ -1,0 +1,3 @@
+main :: forall 'a. Int -> (('a -> Int) * Int) = (recfun f x = (let m = (recfun h m = let z = x;
+                                            in x);
+                      in m, (+) x 1))

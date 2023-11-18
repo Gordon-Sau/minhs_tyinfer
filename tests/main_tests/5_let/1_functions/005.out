@@ -1,0 +1,2 @@
+main :: Int = let f = (recfun f x = (recfun f x = (recfun f x = (recfun f x = (recfun f x = (*) 2 x)))));
+       in f 0 0 0 0 7

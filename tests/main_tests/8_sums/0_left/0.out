@@ -1,0 +1,1 @@
+main :: forall 'a. Int + 'a = Inl 1
