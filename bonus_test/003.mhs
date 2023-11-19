@@ -1,0 +1,3 @@
+main = recfun m y =
+    let g :: forall 'a. 'a -> Int = recfun f x = y;
+    in y

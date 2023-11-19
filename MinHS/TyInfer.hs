@@ -138,19 +138,31 @@ inst BEmpty ds a t = typeError $ InstFailed ds a t
 inferProgram :: Gamma -> Program -> TC (Program, Gamma)
 inferProgram g (SBind x Nothing e) = do
   (s,g') <- inferGen g e
-  return $ (SBind x (Just s) e,g')
-{-
-inferProgram g (SBind x (Just t) e) = do
-  (s,g') <- inferGen g e
-  -- check if s can be instantiated to t
-  return $ (SBind x (Just t) e,g')
--}
+  return (SBind x (Just s) e,g')
+inferProgram g (SBind x (Just s) e) = do
+  g2 <- inferGenInst g e s
+  return (SBind x (Just s) e,g2)
 
 splitMark :: Gamma -> (Gamma,Gamma)
 splitMark g = let (g2,delta) = MinHS.Bwd.span (\x -> x /= Mark) g in
   case g2 of
     g3 :< Mark -> (g3,delta)
-    _ -> error $ "implementation error: splitMark: Mark expected" ++ show g
+    _ -> error $ "implementation error: splitMark: Mark expected: " ++ show g
+
+containsBounded :: [Id] -> Gamma -> Bool
+containsBounded vs BEmpty = False
+containsBounded vs (g:<(_:=Defn t)) = any (flip member $ frv t) vs || containsBounded vs g
+containsBounded vs (g:<_) = containsBounded vs g
+
+inferGenInst :: Gamma -> Exp -> Scheme -> TC Gamma
+inferGenInst g e (Forall vs t') = do
+  (sigma, g2) <- inferGen g e
+  (t, suf) <- specialise sigma
+  g3 <- unify (extend (g2:<Mark) suf) t t'
+  let g4 = fst $ splitMark g3 ;
+  if containsBounded vs g4
+    then typeError $ UnifyFailed g3 t t'
+    else return g4
 
 inferGen :: Gamma -> Exp -> TC (Scheme, Gamma)
 inferGen g e = do
@@ -234,5 +246,10 @@ inferExp g (Let (SBind x Nothing e1:sbs) e2) = do
   let xbind = TermVar x s ;
   (t,g3) <- inferExp (g2:<xbind) (Let sbs e2)
   return (t,remove xbind g3)
--- inferExp _ _ = error "implement me!"
+inferExp g (Let (SBind x (Just s) e1:sbs) e2) = do
+  g2 <- inferGenInst g e1 s
+  let xbind = TermVar x s ;
+  (t,g3) <- inferExp (g2:<xbind) (Let sbs e2)
+  return (t, remove xbind g3)
+inferExp _ _ = error "implement me!"
 

@@ -1,0 +1,3 @@
+main :: forall 'c 'd. 'c -> 'd = recfun m y =
+    let g :: forall 'a 'b. 'a -> 'b = recfun f x = y;
+    in y
